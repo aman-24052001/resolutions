@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our 2025 Resolutions</title>
+    <!-- Updated to latest stable versions -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        /* Improved dark mode transition */
+        
+         :root {
+            --transition-duration: 0.3s;
+        }
+        
+        body,
+        .resolution-card {
+            transition: background-color var(--transition-duration), color var(--transition-duration), transform var(--transition-duration);
+        }
+        
+        .dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .heart {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            14% {
+                transform: scale(1.3);
+            }
+            28% {
+                transform: scale(1);
+            }
+            42% {
+                transform: scale(1.3);
+            }
+            70% {
+                transform: scale(1);
+            }
+        }
+        
+        .resolution-card {
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .resolution-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .progress-ring {
+            transition: stroke-dashoffset 0.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .quote-carousel {
+            overflow: hidden;
+            height: 60px;
+            position: relative;
+        }
+        
+        .quote {
+            position: absolute;
+            width: 100%;
+            animation: slideUp 15s infinite;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        @keyframes slideUp {
+            0%,
+            20% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            5%,
+            15% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Added loading animation */
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading.dark {
+            background: rgba(26, 26, 26, 0.9);
+        }
+        /* Added confetti animation */
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f;
+            animation: confetti 5s ease-in-out infinite;
+        }
+        
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-pink-100 to-purple-200 dark:from-gray-900 dark:to-purple-900 transition-colors duration-300">
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div class="animate__animated animate__bounce animate__infinite">
+            <i class="fas fa-heart text-6xl text-purple-600"></i>
+        </div>
+    </div>
+
+    <div id="particles-js"></div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8 animate__animated animate__fadeIn">
+            <h1 class="text-4xl md:text-6xl font-bold text-purple-600 dark:text-purple-400 mb-4">
+                Our 2025 Journey ❤️
+            </h1>
+            <div class="quote-carousel text-gray-600 dark:text-gray-300 italic">
+
+                <div class="quote">"Building our dreams, one resolution at a time"</div>
+            </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="fixed top-4 right-4 p-2 rounded-full bg-purple-500 text-white hover:bg-purple-600 transition-colors duration-300">
+            <i class="fas fa-moon"></i>
+        </button>
+
+        <!-- Export/Import Buttons -->
+        <div class="fixed top-4 left-4 flex gap-2">
+            <button onclick="exportData()" class="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors duration-300">
+                <i class="fas fa-download"></i>
+            </button>
+            <label class="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300 cursor-pointer">
+                <i class="fas fa-upload"></i>
+                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
+            </label>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg animate__animated animate__fadeInUp">
+                <div class="text-3xl font-bold text-purple-600 dark:text-purple-400" id="total-resolutions">0</div>
+                <div class="text-gray-600 dark:text-gray-300">Total Goals</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                <div class="text-3xl font-bold text-green-600 dark:text-green-400" id="completed-resolutions">0</div>
+                <div class="text-gray-600 dark:text-gray-300">Achieved Together</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400" id="progress-percentage">0%</div>
+                <div class="text-gray-600 dark:text-gray-300">Journey Progress</div>
+            </div>
+        </div>
+
+        <!-- Add Resolution Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg mb-8 animate__animated animate__fadeInUp">
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="text" id="resolution-input" class="flex-1 px-4 py-2 rounded-lg border border-purple-300 dark:border-purple-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Add a new resolution...">
+                <button onclick="addResolution()" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-300">
+                    <i class="fas fa-plus mr-2"></i> Add Goal
+                </button>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-6 flex flex-col md:flex-row gap-4">
+            <input type="text" id="search-input" class="flex-1 px-4 py-2 rounded-lg border border-purple-300 dark:border-purple-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Search resolutions...">
+            <select id="filter-select" class="px-4 py-2 rounded-lg border border-purple-300 dark:border-purple-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="all">All</option>
+                <option value="completed">Completed</option>
+                <option value="in-progress">In Progress</option>
+                <option value="not-started">Not Started</option>
+            </select>
+        </div>
+
+        <!-- Resolutions List -->
+        <div id="resolutions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </div>
+
+    <script>
+        // Improved Particles.js Config
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 40,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ff69b4'
+                },
+                shape: {
+                    type: 'heart'
+                },
+                size: {
+                    value: 4,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2
+                    }
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: true,
+                    out_mode: 'out'
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'repulse'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    }
+                }
+            }
+        });
+
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const savedTheme = localStorage.getItem('theme');
+
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const icon = themeToggle.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Resolution Management
+        let resolutions = JSON.parse(localStorage.getItem('resolutions')) || [{
+            id: 1,
+            title: "Try out different restaurants (one good eating place a month)",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 2,
+            title: "One movie night a week",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 3,
+            title: "One temple visit a week",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 4,
+            title: "Visit the gaming arena (VR and all)",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 5,
+            title: "Good shopping a month",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 6,
+            title: "Go to church street & portrait in the studio",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 7,
+            title: "Take lots of pictures and videos",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 8,
+            title: "Every three months one trip (somewhere nice)",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 9,
+            title: "Visit a hill station or two this year",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 10,
+            title: "Do Gullugullu minimum 36 times",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 11,
+            title: "Take good care of skin, body and hair",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 12,
+            title: "Visit a club",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 13,
+            title: "Dress up properly",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 14,
+            title: "Improve physical fitness and trying to be fit",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }, {
+            id: 15,
+            title: "Moving in together or closer to each other",
+            progress: 0,
+            createdAt: new Date().toISOString()
+        }];
+
+        // Confetti Animation
+        function createConfetti() {
+            const colors = ['#ff69b4', '#ff1493', '#ff69b4', '#ff1493'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        // Improved Notifications
+        // Improved Notifications
+        function showNotification(title, icon) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            Swal.fire({
+                title: title,
+                icon: icon,
+                timer: 2000,
+                showConfirmButton: false,
+                background: isDarkMode ? '#1a1a1a' : '#ffffff',
+                color: isDarkMode ? '#ffffff' : '#000000',
+                toast: true,
+                position: 'top-end',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            });
+        }
+
+        // Data Management
+        function updateLocalStorage() {
+            localStorage.setItem('resolutions', JSON.stringify(resolutions));
+            updateStats();
+        }
+
+        function updateStats() {
+            const total = resolutions.length;
+            const completed = resolutions.filter(r => r.progress === 100).length;
+            const avgProgress = resolutions.reduce((acc, curr) => acc + curr.progress, 0) / total;
+
+            document.getElementById('total-resolutions').textContent = total;
+            document.getElementById('completed-resolutions').textContent = completed;
+            document.getElementById('progress-percentage').textContent = `${Math.round(avgProgress)}%`;
+        }
+
+        // Export/Import Functions
+        function exportData() {
+            const dataStr = JSON.stringify(resolutions, null, 2);
+            const blob = new Blob([dataStr], {
+                type: 'application/json'
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resolutions-backup.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotification('Backup Created Successfully! 💾', 'success');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        if (Array.isArray(importedData)) {
+                            Swal.fire({
+                                title: 'Import Data?',
+                                text: 'This will replace your current resolutions. Continue?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, import!',
+                                cancelButtonText: 'No, cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    resolutions = importedData;
+                                    updateLocalStorage();
+                                    renderResolutions();
+                                    showNotification('Data Imported Successfully! 📥', 'success');
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        showNotification('Invalid backup file! 😕', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Resolution Management Functions
+        function addResolution() {
+            const input = document.getElementById('resolution-input');
+            const title = input.value.trim();
+
+            if (title) {
+                const newResolution = {
+                    id: Date.now(),
+                    title: title,
+                    progress: 0,
+                    createdAt: new Date().toISOString()
+                };
+
+                resolutions.push(newResolution);
+                updateLocalStorage();
+                renderResolutions();
+                input.value = '';
+                showNotification('Goal Added! 🎉', 'success');
+            }
+        }
+
+        function updateProgress(id, increment) {
+            const resolution = resolutions.find(r => r.id === id);
+            if (resolution) {
+                const oldProgress = resolution.progress;
+                resolution.progress = Math.min(100, Math.max(0, resolution.progress + increment));
+                updateLocalStorage();
+                renderResolutions();
+
+                if (resolution.progress === 100 && oldProgress !== 100) {
+                    createConfetti();
+                    showNotification('Goal Achieved! 🎊', 'success');
+                } else {
+                    showNotification('Progress Updated! 📈', 'info');
+                }
+            }
+        }
+
+        function deleteResolution(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                background: document.documentElement.classList.contains('dark') ? '#1a1a1a' : '#ffffff',
+                color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    resolutions = resolutions.filter(r => r.id !== id);
+                    updateLocalStorage();
+                    renderResolutions();
+                    showNotification('Goal Deleted! ✨', 'success');
+                }
+            });
+        }
+
+        // Search and Filter Functions
+        function filterResolutions() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filterValue = document.getElementById('filter-select').value;
+
+            return resolutions.filter(resolution => {
+                const matchesSearch = resolution.title.toLowerCase().includes(searchTerm);
+                let matchesFilter = true;
+
+                switch (filterValue) {
+                    case 'completed':
+                        matchesFilter = resolution.progress === 100;
+                        break;
+                    case 'in-progress':
+                        matchesFilter = resolution.progress > 0 && resolution.progress < 100;
+                        break;
+                    case 'not-started':
+                        matchesFilter = resolution.progress === 0;
+                        break;
+                }
+
+                return matchesSearch && matchesFilter;
+            });
+        }
+
+        // Render Functions
+        function renderResolutions() {
+            const container = document.getElementById('resolutions-container');
+            const filteredResolutions = filterResolutions();
+
+            container.innerHTML = '';
+
+            filteredResolutions.forEach(resolution => {
+                const card = document.createElement('div');
+                card.className = 'resolution-card bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg animate__animated animate__fadeIn';
+
+                const progressCircle = `
+                    <svg class="w-20 h-20">
+                        <circle class="text-gray-300 dark:text-gray-600" stroke-width="5" stroke="currentColor" fill="transparent" r="30" cx="40" cy="40"/>
+                        <circle class="text-purple-600 dark:text-purple-400 progress-ring" stroke-width="5" stroke="currentColor" fill="transparent" r="30" cx="40" cy="40"
+                            style="stroke-dasharray: 188.5; stroke-dashoffset: ${188.5 - (188.5 * resolution.progress) / 100}"/>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-lg font-bold">${resolution.progress}%</span>
+                    </div>
+                `;
+
+                const createdDate = new Date(resolution.createdAt).toLocaleDateString();
+
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row items-center gap-4">
+                        <div class="relative">${progressCircle}</div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">${resolution.title}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Created: ${createdDate}</p>
+                            <div class="flex gap-2">
+                                <button onclick="updateProgress(${resolution.id}, -10)" 
+                                    class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button onclick="updateProgress(${resolution.id}, 10)"
+                                    class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button onclick="deleteResolution(${resolution.id})"
+                                    class="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Event Listeners
+        document.getElementById('resolution-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addResolution();
+            }
+        });
+
+        document.getElementById('search-input').addEventListener('input', renderResolutions);
+        document.getElementById('filter-select').addEventListener('change', renderResolutions);
+
+        // Initialize
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 1000);
+            }, 1500);
+
+            renderResolutions();
+            updateStats();
+        });
+    </script>
+</body>
+
+</html>
